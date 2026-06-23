@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerHand : MonoBehaviour
@@ -6,36 +6,48 @@ public class PlayerHand : MonoBehaviour
     [SerializeField] private Deck deck;
     [SerializeField] private Transform[] cardSlots;
     [SerializeField] private GameObject cardPrefab;
-    //起始卡牌数量
     [SerializeField] private int startingHandSize = 2;
-    //在手上的卡牌
     private List<Card> cardsInHand = new List<Card>();
 
     [SerializeField] private DiscardPile discardPile;
+    [SerializeField] private ActionPoints actionPoints;
 
     void Start()
     {
-        for(int i = 0; i < startingHandSize; i++)
+        // 初始发牌不消耗行动点数
+        for (int i = 0; i < startingHandSize; i++)
         {
-            DrawNextCard();
+            DrawCardInternal();
         }
     }
 
-    /// <summary>
-    /// 抽下一张牌
-    /// </summary>
+    // ─── 抽牌 ───
+
+    /// <summary>玩家点击牌堆抽牌（消耗 1 行动点）</summary>
     public void DrawNextCard()
     {
-        //如果手中没有空区卡牌槽位
-        if(cardSlots == null || cardsInHand.Count >= cardSlots.Length)
+        if (actionPoints != null && !actionPoints.CanAfford(1))
+        {
+            Debug.Log($"行动点数不足，无法抽牌（当前 {actionPoints.CurrentPoints}）");
             return;
-    
-        //获取下一张牌的数�?
+        }
+
+        if (!DrawCardInternal())
+            return;
+
+        actionPoints?.TrySpend(1);
+    }
+
+    /// <summary>内部抽牌逻辑（无消耗），成功返回 true</summary>
+    private bool DrawCardInternal()
+    {
+        if (cardSlots == null || cardsInHand.Count >= cardSlots.Length)
+            return false;
+
         CardData cardData = deck.DrawCard();
-        if(cardData == null) return;
+        if (cardData == null) return false;
 
         int slotIndex = cardsInHand.Count;
-        //在手牌区实例化出对于卡牌对象
         GameObject newCard = Instantiate(cardPrefab, cardSlots[slotIndex].position, Quaternion.identity);
         Card card = newCard.GetComponent<Card>();
         card.LoadCardData(cardData);
@@ -43,36 +55,44 @@ public class PlayerHand : MonoBehaviour
 
         cardsInHand.Add(card);
         cardsInHand[slotIndex].transform.SetParent(cardSlots[slotIndex]);
+        return true;
     }
 
-    /// <summary>
-    /// 使用卡牌
-    /// </summary>
+    // ─── 出牌 ───
+
     public void PlayCard(Card card)
     {
+        if (TurnSystem.Instance != null && !TurnSystem.Instance.CanPlayCard)
+            return;
+
         CardData cardData = card.GetCardData();
+
+        // 检查行动点数
+        if (actionPoints != null && !actionPoints.CanAfford(cardData.actionCost))
+        {
+            Debug.Log($"行动点数不足（需要 {cardData.actionCost}，当前 {actionPoints.CurrentPoints}）");
+            return;
+        }
+        actionPoints?.TrySpend(cardData.actionCost);
+
         cardsInHand.Remove(card);
         discardPile.DiscardCard(cardData);
-
         Destroy(card.gameObject);
         RepositionCards();
 
-        //调用卡牌使用事件
         EventCenter.CardPlayedEvent(cardData);
     }
 
-    /// <summary>
-    /// 更新手牌位置
-    /// </summary>
+    // ─── 辅助 ───
+
+    public List<Card> GetCardsInHand() => cardsInHand;
+
     private void RepositionCards()
     {
-        //解除所有手牌父子关�?
-        for(int i = 0; i < cardsInHand.Count; i++)
-        {
+        for (int i = 0; i < cardsInHand.Count; i++)
             cardsInHand[i].transform.SetParent(null);
-        }
 
-        for(int i = 0; i < cardsInHand.Count; i++)
+        for (int i = 0; i < cardsInHand.Count; i++)
         {
             cardsInHand[i].transform.SetParent(cardSlots[i]);
             cardsInHand[i].transform.position = cardSlots[i].position;
@@ -80,4 +100,3 @@ public class PlayerHand : MonoBehaviour
         }
     }
 }
-

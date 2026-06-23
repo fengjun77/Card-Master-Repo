@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -8,12 +8,14 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject effectRoot;
     private Animator anim;
     private Health health;
+    private StatusEffectManager statusManager;
     private Vector3 originalPos;
 
     void Awake()
     {
         anim = GetComponentInChildren<Animator>();
         health = GetComponent<Health>();
+        statusManager = GetComponent<StatusEffectManager>();
     }
 
     void Start()
@@ -23,7 +25,7 @@ public class Player : MonoBehaviour
 
     void OnEnable()
     {
-        EventCenter.OnCardPlayed += HandleCardPlayed; 
+        EventCenter.OnCardPlayed += HandleCardPlayed;
     }
 
     void OnDisable()
@@ -34,62 +36,42 @@ public class Player : MonoBehaviour
     private void HandleCardPlayed(CardData cardData)
     {
         Debug.Log("卡牌被打出了");
-        if(cardData.attackPower > 0)
-            Attack(cardData);
-        if(cardData.healPower > 0)
-            Heal(cardData);
+        StartCoroutine(HandleCardEffects(cardData));
     }
 
-    /// <summary>
-    /// 攻击逻辑
-    /// </summary>
-    /// <param name="cardData"></param>
-    private void Attack(CardData cardData)
+    private IEnumerator HandleCardEffects(CardData cardData)
     {
-        StartCoroutine(PlayerAttackAnimation(cardData));
-    }
+        // ───── 对己效果 ─────
 
-    /// <summary>
-    /// 治疗逻辑
-    /// </summary>
-    /// <param name="cardData"></param>
-    private void Heal(CardData cardData)
-    {
-        health.Heal(cardData.healPower);
-        GameObject effect = Instantiate(healEffect, effectRoot.transform);
-        
-        Destroy(effect, 1);
-    }
+        // 治疗
+        if (cardData.healPower > 0)
+            yield return StartCoroutine(
+                CombatEffectHelper.HealEffect(health, cardData.healPower, healEffect, effectRoot));
 
-    private IEnumerator PlayerAttackAnimation(CardData cardData)
-    {
-        Vector3 targetPos = originalPos + new Vector3(7,0,0);
+        // 对己状态（护甲、回血等）
+        if (cardData.selfStatusEffects != null && cardData.selfStatusEffects.Count > 0)
+            statusManager?.ApplyEffects(cardData.selfStatusEffects);
 
-        float duration = 1f;
-        float time = 0;
+        // ───── 对敌效果 ─────
 
-        while(time < duration)
+        bool hasAttack = cardData.attackPower > 0;
+        bool hasTargetStatus = cardData.statusEffects != null && cardData.statusEffects.Count > 0;
+
+        if (hasAttack)
         {
-            playerSprite.transform.position = Vector3.Lerp(originalPos, targetPos, time / duration);
-            time += Time.deltaTime;
-            yield return null;
+            yield return StartCoroutine(
+                CombatEffectHelper.AttackAnimation(
+                    playerSprite, originalPos, new Vector3(7, 0, 0),
+                    anim, "Attack_01",
+                    () => EventCenter.EnemyHitEvent(cardData)));
+        }
+        else if (hasTargetStatus)
+        {
+            // 纯状态卡牌，无攻击动画，直接命中敌人
+            EventCenter.EnemyHitEvent(cardData);
         }
 
-        anim.Play("Attack_01");
-        yield return new WaitForSeconds(.5f);
-        EventCenter.BossHitEvent(cardData);
-
-        duration = .6f;
-        time = 0;
-        while(time < duration)
-        {
-            playerSprite.transform.position = Vector3.Lerp(targetPos, originalPos, time / duration);
-            time += Time.deltaTime;
-            yield return null;
-        }
-
-        playerSprite.transform.position = originalPos;
-
-        yield return null;
+        // 所有效果完成
+        EventCenter.CardEffectCompletedEvent();
     }
 }

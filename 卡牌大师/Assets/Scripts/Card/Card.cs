@@ -1,5 +1,4 @@
-using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -17,16 +16,14 @@ public class Card : MonoBehaviour
 
     private SortingGroup sg;
     private int originalSortingOrder;
-    //是否在被拖拽(静态保证只有一个在被拖�?
+    //是否在被拖拽(静态保证只有一个在被拖拽)
     private static bool isBeingDragger;
     //当前卡牌信息
     private CardData currentCardData;
-    //手牌噼�用于出牌
+    //手牌用于出牌
     [SerializeField] private PlayerHand playerHand;
     //是否在出牌区
     public bool IsInPlayZone { get; set; }
-    //测试
-    //[SerializeField] private CardData cardData;
 
     void Awake()
     {
@@ -39,14 +36,11 @@ public class Card : MonoBehaviour
         originalScale = transform.localScale;
         originalPos = transform.position;
         originalSortingOrder = sg.sortingOrder;
-
-        //LoadCardData(cardData);
     }
 
     /// <summary>
     /// 加载卡牌数据
     /// </summary>
-    /// <param name="cardData"></param>
     public void LoadCardData(CardData cardData)
     {
         currentCardData = cardData;
@@ -60,6 +54,7 @@ public class Card : MonoBehaviour
     {
         if(isBeingDragger)
             return;
+
         transform.localScale = originalScale * 1.6f;
         transform.position += new Vector3(0,1.5f,0);
         sg.sortingOrder = originalSortingOrder + 1;
@@ -86,6 +81,7 @@ public class Card : MonoBehaviour
 
         if (IsInPlayZone)
         {
+            // 由 PlayerHand.PlayCard 内部检查回合状态
             playerHand.PlayCard(this);
             return;
         }
@@ -127,10 +123,11 @@ public class Card : MonoBehaviour
         originalPos = transform.position;
     }
 
+    /// <summary>
+    /// 控制卡牌交互功能
+    /// </summary>
     public void SetInteractable(bool interactable)
     {
         col.enabled = interactable;
     }
 }
-
-
