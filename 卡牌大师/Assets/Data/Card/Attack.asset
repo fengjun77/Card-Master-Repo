@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5003e2c1505e27d47a80969673c2727b, type: 3}
+  m_Name: Attack
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  illustration: {fileID: -2653615507464312198, guid: 658a3d95751627248af6f776e5ec9622, type: 3}
+  cardName: "\u653B\u51FB"
+  cardDescription: "\u5BF9\u654C\u4EBA\u9020\u6210\u4E09\u70B9\u4F24\u5BB3"
+  actionCost: 1
+  attackPower: 3
+  healPower: 0
