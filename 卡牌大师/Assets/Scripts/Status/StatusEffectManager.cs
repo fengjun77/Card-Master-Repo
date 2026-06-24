@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +8,7 @@ using UnityEngine;
 /// </summary>
 public class StatusEffectManager : MonoBehaviour
 {
+    //当前buff
     private List<StatusEffect> effects = new List<StatusEffect>();
     private Health health;
 
@@ -85,11 +86,11 @@ public class StatusEffectManager : MonoBehaviour
         }
     }
 
-   /// <summary>把卡牌配置的状态效果应用到本实体</summary>
-   public void ApplyCardEffects(CardData cardData)
-   {
+    /// <summary>把卡牌配置的状态效果应用到本实体</summary>
+    public void ApplyCardEffects(CardData cardData)
+    {
         ApplyEffects(cardData.statusEffects);
-   }
+    }
 
     /// <summary>获取所有活跃效果的只读快照（供 UI 遍历）</summary>
     public IReadOnlyList<StatusEffect> GetAllEffects() => effects.AsReadOnly();

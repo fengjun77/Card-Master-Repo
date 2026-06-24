@@ -10,13 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5003e2c1505e27d47a80969673c2727b, type: 3}
-  m_Name: Attack
+  m_Name: Armor
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  illustration: {fileID: -2653615507464312198, guid: 658a3d95751627248af6f776e5ec9622, type: 3}
-  cardName: "\u653B\u51FB"
-  cardDescription: "\u5BF9\u654C\u4EBA\u9020\u6210\u4E09\u70B9\u4F24\u5BB3"
-  actionCost: 2
-  attackPower: 3
+  illustration: {fileID: 6280377099511452678, guid: 658a3d95751627248af6f776e5ec9622, type: 3}
+  cardName: "\u62A4\u7532"
+  cardDescription: "\u7ED9\u81EA\u5DF1\u6DFB\u52A02\u683C\u62A4\u7532\u503C\uFF0C\u65E0\u6CD5\u62B5\u6321\u6301\u7EED\u4F24\u5BB3"
+  actionCost: 1
+  attackPower: 0
   healPower: 0
   statusEffects: []
-  selfStatusEffects: []
+  selfStatusEffects:
+  - type: 0
+    amount: 2
+    duration: -1

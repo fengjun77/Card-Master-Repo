@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -81,11 +81,14 @@ public class Enemy : MonoBehaviour
                     anim, "Attack_01",
                     () =>
                     {
+                        // 玩家护甲/易伤修正
                         int damage = playerStatusManager != null
                             ? playerStatusManager.ModifyIncomingDamage(action.attackPower)
                             : action.attackPower;
 
                         playerHealth?.TakeDamage(damage);
+
+                        // 应用这张卡牌上的状态效果到玩家
                         playerStatusManager?.ApplyCardEffects(action);
                     }));
         }

@@ -15,6 +15,8 @@ MonoBehaviour:
   illustration: {fileID: 1780464846544423767, guid: 658a3d95751627248af6f776e5ec9622, type: 3}
   cardName: "\u6CBB\u7597"
   cardDescription: "\u6062\u590D\u81EA\u8EAB2\u70B9\u751F\u547D"
-  actionCost: 1
+  actionCost: 2
   attackPower: 0
   healPower: 3
+  statusEffects: []
+  selfStatusEffects: []

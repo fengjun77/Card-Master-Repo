@@ -24,6 +24,12 @@ public class GameUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playerStatusText;
     [SerializeField] private TextMeshProUGUI enemyStatusText;
 
+    void Awake()
+    {
+        UpdatePlayerHealth(playerHealth.MaxHealth,playerHealth.MaxHealth);
+        UpdateEnemyHealth(enemyHealth.MaxHealth, enemyHealth.MaxHealth);
+    }
+
     void OnEnable()
     {
         // ─── 玩家血量 ───

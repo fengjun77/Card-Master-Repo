@@ -10,13 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5003e2c1505e27d47a80969673c2727b, type: 3}
-  m_Name: Attack
+  m_Name: Venomous Edge
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  illustration: {fileID: -2653615507464312198, guid: 658a3d95751627248af6f776e5ec9622, type: 3}
-  cardName: "\u653B\u51FB"
-  cardDescription: "\u5BF9\u654C\u4EBA\u9020\u6210\u4E09\u70B9\u4F24\u5BB3"
-  actionCost: 2
-  attackPower: 3
+  illustration: {fileID: -599703807897748101, guid: 658a3d95751627248af6f776e5ec9622, type: 3}
+  cardName: "\u6DEC\u6BD2\u8FF7\u96FE"
+  cardDescription: "\u6BCF\u56DE\u5408\u9020\u6210\u4E00\u70B9\u4F24\u5BB3\uFF0C\u6301\u7EED\u4E09\u56DE\u5408"
+  actionCost: 1
+  attackPower: 0
   healPower: 0
-  statusEffects: []
+  statusEffects:
+  - type: 2
+    amount: 1
+    duration: 3
   selfStatusEffects: []
